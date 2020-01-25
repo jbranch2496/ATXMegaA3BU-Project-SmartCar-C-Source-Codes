@@ -3,9 +3,7 @@
  *
  * Created: 11/23/2019 6:53:37 AM
  * Author : Johnathan Branch
-  * Class: PHYS 402, Fall 2019
   * HC-SR04 Proximity Sensor Test Code( pin out goes as follows; Vcc, Trig, Echo, Gnd
-  * Credit:Yes
   * Purpose: This code illustrates an example of how to interface the HC-SR04 proximity sensor with the ATXMega256 A3BU.
   * Obj: Use the Ultrasonic sensor to measure the distance between close objects(range 2cm ~ 40cm). This doesn't have to be exact I just 
   * need to find a feel for how well the sensor works at the distance I'm concerned with which is about 8-10inches(about 20 ~25 cm) from the sensor.
