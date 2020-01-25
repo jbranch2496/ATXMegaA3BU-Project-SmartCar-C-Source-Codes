@@ -1,5 +1,4 @@
 /*
- * PHYS402_PWMtest1.c
  *Purpose: This code illustrates how to set up PWM on the 
  ATXMega 256A3BU using the compare functionality of the 
  target board. MCU clock needs to be set to 2 MHZ for code 
