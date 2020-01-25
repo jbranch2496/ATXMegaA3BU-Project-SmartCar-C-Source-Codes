@@ -1,5 +1,4 @@
 /*
- * PHY402_FinalProject.c
  * Created: 12/05/2019 11:00:37 AM
  * Author : Johnathan Branch
  * Purpose: This code is the application code for controlling the smart robotic vehicle. This code illustrates how to interface the HC-SR04 proximity sensor, 
