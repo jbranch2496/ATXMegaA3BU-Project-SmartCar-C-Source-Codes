@@ -1,12 +1,10 @@
 /*
-/*
- * PHYS402_PWMTest2.c
  *Purpose: This code illustrates how to set up PWM on the 
  ATXMega 256A3BU using the compare functionality of the 
  target board. MCU clock needs to be set to 2 MHZ for code 
  to run properly. PWM will be run off of Pin PC0
  * Created: 10/15/2019 11:21:39 AM
-* Author : Johnathan Branch 
+ * Author : Johnathan Branch 
  */ 
 
 #include <avr/io.h>
