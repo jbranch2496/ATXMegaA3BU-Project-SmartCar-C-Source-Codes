@@ -2,9 +2,6 @@
  * PHY402_FinalProject.c
  * Created: 12/05/2019 11:00:37 AM
  * Author : Johnathan Branch
- * Class: PHYS 402, Fall 2019
- * Embedded Microsystems Final Project: Smart IR and load detection robotic vehicle
- * Credit:
  * Purpose: This code is the application code for controlling the smart robotic vehicle. This code illustrates how to interface the HC-SR04 proximity sensor, 
  * L298 H-bridge driver, and optical detection networks(load and motor control) with the ATXMega256 A3BU.
  
@@ -21,10 +18,10 @@
  the DC motors have the following associations on the two 293 motor drivers; FML(IN1,IN2), FMR(IN3,IN4), BML(IN3,IN4), and BMR(IN1, IN2) 		
 
  * Pin Mappings: IR-left: PB1(0x02)
-			    IR-right: PB0(0x01)
-				    Load: PB2(0x04)
-					Trig: PC3(0x08)
-					Echo: PC2(0x04)
+			   	 IR-right: PB0(0x01)
+				 Load: PB2(0x04)
+				 Trig: PC3(0x08)
+				 Echo: PC2(0x04)
 				 FML_IN1: PA0(0x01)
 				 FML_IN2: PA1(0x02)
 				 FMR_IN3: PA2(0x04)
@@ -68,7 +65,7 @@ volatile int ir_left = 0;
 volatile int ir_right = 0;
 volatile int load_detect = 0;
 volatile double ir_counter = 0;			// loop counter used in the ir read function
-volatile double load_counter = 0;       // loop counter used in the load_detect function
+volatile double load_counter = 0;       	// loop counter used in the load_detect function
 const double counter_max = 10;			// max value loop counter variable will count to;play with this value should be smaller than timer period
 volatile uint8_t car_direction = 0;		// 0-> stop, 1-> forward, 2-> turn left, 3 -> turn right  
 volatile int echo_count = 0;
@@ -92,7 +89,7 @@ ISR(TCC1_OVF_vect)					// FMR
 }
 ISR(TCC1_CCA_vect)
 {
-	PORTC_OUT &= ~(0x02);			// PWM off
+	PORTC_OUT &= ~(0x02);				// PWM off
 	PORTR_OUT ^= 0x02;
 }
 
@@ -104,7 +101,7 @@ ISR(TCE0_OVF_vect)					// BML
 }
 ISR(TCE0_CCA_vect)			 
 {
-	PORTC_OUT &= ~(0x80);			// PWM off
+	PORTC_OUT &= ~(0x80);				// PWM off
 	PORTR_OUT ^= 0x02;
 }
 
@@ -116,7 +113,7 @@ ISR(TCE1_OVF_vect)					// BMR
 }
 ISR(TCE1_CCA_vect)
 {
-	PORTC_OUT &= ~(0x40);			// PWM off
+	PORTC_OUT &= ~(0x40);				// PWM off
 	PORTR_OUT ^= 0x02;
 }
 //**********************************//
@@ -133,8 +130,8 @@ ISR(TCD1_OVF_vect)
 			PORTC_OUT |= 0x08;		    // turn on repeated to get timing right 
 			PORTC_OUT |= 0x08;		    // turn on repeated to get timing right
 			PORTC_OUT |= 0x08;		    // turn on repeated to get timing right
-			//	_delay_us(1);				// fifteen us delay
-			PORTC_OUT &= ~(0x08);		// turn off, total pulse should last about 15us
+			//	_delay_us(1);		    // fifteen us delay
+			PORTC_OUT &= ~(0x08);	 	    // turn off, total pulse should last about 15us
 			}
 }
 ISR(PORTC_INT0_vect)
@@ -154,9 +151,9 @@ void IR_Read()
 		do{
 			ir_right = (PORTB_IN & 0x01); // stores the input coming from PB0
 			ir_left = (PORTB_IN & 0x02);  // stores the input coming from PB1
-			ir_counter++;				  // increment the counter
+			ir_counter++;		      // increment the counter
 		}while(ir_counter < counter_max);
-		ir_counter = 0;					  // resets the counter after the loop
+		ir_counter = 0;		   	      // resets the counter after the loop
 		
 		if( (ir_left == 0) && (ir_right == 0) )						// Both sensors over the white
 			car_direction = 1;
@@ -179,12 +176,12 @@ void Load_Detect()
 		// Do-while loop captures the load detection readings  
 		do{
 			load_detect = (PORTB_IN & 0x04);	// stores the input coming from PB0
-			load_counter++;						// increment the counter
+			load_counter++;				// increment the counter
 		}while(load_counter < counter_max);
-		load_counter = 0;						// resets the counter after the loop
+		load_counter = 0;					// resets the counter after the loop
 		
 		if(load_detect != 0x04)					// if the reading is LOW on PB2 then there is NOT a Load 
-			car_direction = 0;					// car ignores previous IR sensor configuration for the motors if there is not a Load 					
+			car_direction = 0;				// car ignores previous IR sensor configuration for the motors if there is not a Load 					
 			
 }
 
@@ -263,13 +260,13 @@ void pwm_init()
 
 void HCSR04_init()
 {
-	PORTC_INT0MASK = 0x04;												// only want PC2 to fire interrupt
-	PORTC_PIN2CTRL = 01;												// rising edge triggered on pin 2
+	PORTC_INT0MASK = 0x04;											// only want PC2 to fire interrupt
+	PORTC_PIN2CTRL = 01;											// rising edge triggered on pin 2
 	PORTC_INTCTRL = PMIC_MEDLVLEN_bm;									// generate an interrupt on rising edge of PC2 
 		
-	TCD1_PER = 0x7530;													// set the range of the counter(30000 ticks of prescaled clock)
+	TCD1_PER = 0x7530;											// set the range of the counter(30000 ticks of prescaled clock)
 	TCD1_INTCTRLA = PMIC_MEDLVLEN_bm;									// generate an interrupt when the timer overflows
-	TCD1_CTRLA |= 0x01;													// set the timer prescaler(div by 1)	
+	TCD1_CTRLA |= 0x01;											// set the timer prescaler(div by 1)	
 	PMIC.CTRL = PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_LOLVLEN_bm;	// turn on all interrupt levels
 }
 //**********************************//
@@ -281,15 +278,15 @@ int main(void)
 											// BML on PB6 and PB7
 											// BMR on PB4 and PB5
 	
-	PORTA_DIR |= 0xFF;						// Initialize lower and upper nib of PORTA as outputs for the DC Motors
+	PORTA_DIR |= 0xFF;					// Initialize lower and upper nib of PORTA as outputs for the DC Motors
 	PORTB_DIR &= ~(0x07);					// Initialize PB0 and PB1 as inputs for reading the IR sensors and PB2 as input for reading load detection network
-	PORTC_DIR |= 0x08;						// Initialize PC3 as output for Trig for distance reading
+	PORTC_DIR |= 0x08;					// Initialize PC3 as output for Trig for distance reading
 	PORTC_DIR &= ~(0x04);					// Initialize PC2 and input for Echo for distance reading
 	
-	cli();									// Disables all global interrupts
-	pwm_init();								// Initialize Timers for the PWM channels
+	cli();								// Disables all global interrupts
+	pwm_init();							// Initialize Timers for the PWM channels
 	HCSR04_init();							// Initialize Timer for the HCSR-04 proximity sensor
-	sei();									// Enables all global interrupts
+	sei();								// Enables all global interrupts
 	
 	TCC0_CCA = FML_PWM;						 // Sets up the CCA register which for PWM SS mode is the duty cycle
 	TCC1_CCA = FMR_PWM;						 // Sets up the CCA register which for PWM SS mode is the duty cycle  
@@ -298,15 +295,15 @@ int main(void)
 	
 	PORTR_DIR |= 0x03;						 // Enable on board LED as output for checking ISR firing
 	
-	while( (TCC0_INTFLAGS & 0x01) == 0);	 // waits for the new compare value to be loaded
-	TCC0_INTFLAGS = 0x00;					 // clear the interrupt flag
+	while( (TCC0_INTFLAGS & 0x01) == 0);	 			// waits for the new compare value to be loaded
+	TCC0_INTFLAGS = 0x00;					 	// clear the interrupt flag
 
 	PORTA_OUT = 0x00;						 // set the DC motors to null to begin with before the infinite while loop 
 	
 	while(1){
 	
 				
-				IR_Read();					// Call to function will read the IR sensors and set car direction flag
+				IR_Read();				// Call to function will read the IR sensors and set car direction flag
 				Load_Detect();				// Call to function will read the Load circuit network and reassign the car direction flag if needed
 				Dist_Detect();				// Call to function will read the distance sensor and reassign the car direction flag if needed
 				Config_Set();				// Configures the output to the motor driver to control the car's motion
